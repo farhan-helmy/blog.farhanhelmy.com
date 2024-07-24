@@ -5,6 +5,7 @@ import { allPages } from "contentlayer/generated";
 import { Mdx } from "@/components/mdx-components";
 import { allCarisurauPosts } from "contentlayer/generated";
 import Link from "next/link";
+import "@/styles/mdx.css";
 
 interface PageProps {
   params: {

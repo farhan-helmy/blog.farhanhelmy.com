@@ -5,4 +5,17 @@ date: "2024-07-05"
 author: "Farhan Helmy"
 ---
 
-testtest
+```ts
+interface Props {
+  title: string;
+  description: string;
+  dates: string;
+  location: string;
+  image?: string;
+  links?: readonly {
+    icon: React.ReactNode;
+    title: string;
+    href: string;
+  }[];
+}
+```
