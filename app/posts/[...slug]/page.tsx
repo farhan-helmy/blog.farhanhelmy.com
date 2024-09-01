@@ -4,6 +4,7 @@ import { allPosts } from "contentlayer/generated";
 import { Metadata } from "next";
 import { Mdx } from "@/components/mdx-components";
 import "@/styles/mdx.css";
+import Image from "next/image";
 
 interface PostProps {
   params: {
@@ -32,8 +33,28 @@ export async function generateMetadata({
   }
 
   return {
-    title: post.title,
+    title: `${post.title} | Blog`,
     description: post.description,
+    openGraph: {
+      title: post.title,
+      description: post.description,
+      url: `https://blog.farhanhelmy.com/posts/${params.slug.join("/")}`,
+      type: 'article',
+      images: [
+        {
+          url: post.image || 'https://blog.farhanhelmy.com/blog-post-3.jpg',
+          width: 800,
+          height: 600,
+          alt: post.title,
+        },
+      ],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: post.title,
+      description: post.description,
+      images: [post.image || 'https://blog.farhanhelmy.com/blog-post-3.jpg'],
+    },
   };
 }
 
@@ -62,6 +83,9 @@ export default async function PostPage({ params }: PostProps) {
         <div className="text-xs font-light">
           {new Date(post.date).toDateString()} by Farhan Helmy
         </div>
+      )}
+      {post.image && (
+        <Image src={post.image} alt={post.title} className="my-4" width={1000} height={1000} />
       )}
       <hr className="my-4" />
       <Mdx code={post.body.code} />
