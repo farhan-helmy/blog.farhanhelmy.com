@@ -1,21 +1,178 @@
 ---
-title: Validasi IC Menggunakan Zod dan Malaysiaic NPM Package
-description: Tutorial cara menggunakan Zod dan NPM package malaysiaic untuk validasi IC
-date: "2024-07-05"
+title: Malaysia IC Validation using Zod and malaysiaic NPM package
+description: Tutorial on how to validate Malaysia IC using Zod and malaysiaic NPM package
+date: "2024-01-09"
 author: "Farhan Helmy"
 ---
 
-```ts
-interface Props {
-  title: string;
-  description: string;
-  dates: string;
-  location: string;
-  image?: string;
-  links?: readonly {
-    icon: React.ReactNode;
-    title: string;
-    href: string;
-  }[];
-}
+# Malaysia IC Validation using Zod and malaysiaic NPM package
+
+In this tutorial, we will be using Zod and malaysiaic NPM package to validate Malaysia IC.
+
+## Prerequisites
+
+- [Node.js](https://nodejs.org/) or [Bun](https://bun.sh/) installed on your machine
+- Basic knowledge of TypeScript
+- Basic knowledge of Zod and how to use it
+
+## Step 1: Create a new React / Typescript project
+
+```bash
+bun create vite malaysiaic-validation --template react-ts
+
+cd malaysiaic-validation
 ```
+
+## Step 2: Install the necessary packages
+
+```bash
+bun add malaysiaic react-hook-form zod @hookform/resolvers
+```
+
+## Step 3: Create the form
+
+In `App.tsx`, we will create a form that will validate the Malaysia IC number using Zod and malaysiaic NPM package.
+
+```ts
+import { isValidIc } from "malaysiaic";
+import { z } from "zod";
+import { useForm, SubmitHandler } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import './index.css';
+
+const icFormSchema = z.object({
+  icNumber: z
+    .string()
+    .min(1, { message: "IC number is required" })
+    .superRefine((ic, ctx) => {
+      if (!isValidIc(ic)) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "IC number is invalid",
+        });
+      }
+      return true;
+    }),
+});
+
+function App() {
+  const form = useForm<z.infer<typeof icFormSchema>>({
+    resolver: zodResolver(icFormSchema),
+    defaultValues: {
+      icNumber: "",
+    },
+  });
+
+  const onSubmit: SubmitHandler<z.infer<typeof icFormSchema>> = (values) => {
+    alert(`IC Number is correct!: ${values.icNumber}`);
+  };
+
+  return (
+    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+      <form onSubmit={form.handleSubmit(onSubmit)} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+        <div style={{ marginBottom: '1rem' }}>
+          <label htmlFor="icNumber">IC Number:</label>
+          <input
+            id="icNumber"
+            type="text"
+            {...form.register("icNumber")}
+          />
+          {form.formState.errors.icNumber && (
+            <p>{form.formState.errors.icNumber.message}</p>
+          )}
+        </div>
+        <button type="submit">Submit</button>
+      </form>
+    </div>
+  )
+}
+
+export default App
+```
+
+Adjust the `index.css` file to your liking.
+
+```css
+:root {
+  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
+  color-scheme: light dark;
+  color: rgba(255, 255, 255, 0.87);
+  background-color: #242424;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+a {
+  font-weight: 500;
+  color: #646cff;
+  text-decoration: inherit;
+}
+a:hover {
+  color: #535bf2;
+}
+
+body {
+  margin: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-width: 320px;
+  min-height: 100vh;
+}
+
+h1 {
+  font-size: 3.2em;
+  line-height: 1.1;
+}
+
+button {
+  border-radius: 8px;
+  border: 1px solid transparent;
+  padding: 0.6em 1.2em;
+  font-size: 1em;
+  font-weight: 500;
+  font-family: inherit;
+  background-color: #1a1a1a;
+  cursor: pointer;
+  transition: border-color 0.25s;
+}
+button:hover {
+  border-color: #646cff;
+}
+button:focus,
+button:focus-visible {
+  outline: 4px auto -webkit-focus-ring-color;
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    color: #213547;
+    background-color: #ffffff;
+  }
+  a:hover {
+    color: #747bff;
+  }
+  button {
+    background-color: #f9f9f9;
+  }
+}
+
+```
+
+## Step 4: Run the project
+
+```bash
+bun run dev
+```
+
+## Step 5: Done!
+
+You can now use the form to validate the Malaysia IC number.
+
+![Alt text for the GIF](/malaysiaic/malaysiaic.gif)
